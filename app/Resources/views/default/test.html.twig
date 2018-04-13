@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {#{{ dump(songs) }}#}
+
+    <ul>
+        {% for song in songs %}
+            <li>{{ song.Artist }} / {{ song.Song }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

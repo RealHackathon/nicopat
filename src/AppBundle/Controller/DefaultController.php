@@ -27,14 +27,8 @@ class DefaultController extends Controller
      */
     public function testAction(Request $request, GetLyrics $getLyrics)
     {
-<<<<<<< HEAD
-        $toFind = $request->request->get('tofind');
-//        $toFind = "j'ai encore rêvé d'elle";
-=======
 
-//        $toFind = "emportés par la foule";
-        $toFind = "au clair de la lune";
->>>>>>> service
+        $toFind = $request->request->get('tofind');
 
         $songs = $getLyrics->search($toFind);
         $song = $getLyrics->getById($songs[0]->LyricId, $songs[0]->LyricChecksum);

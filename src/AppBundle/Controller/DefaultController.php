@@ -17,7 +17,7 @@ class DefaultController extends Controller
     {
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
         ]);
     }
 
@@ -27,15 +27,24 @@ class DefaultController extends Controller
      */
     public function testAction(Request $request, GetLyrics $getLyrics)
     {
+<<<<<<< HEAD
         $toFind = $request->request->get('tofind');
 //        $toFind = "j'ai encore rêvé d'elle";
+=======
+
+//        $toFind = "emportés par la foule";
+        $toFind = "au clair de la lune";
+>>>>>>> service
 
         $songs = $getLyrics->search($toFind);
+        $song = $getLyrics->getById($songs[0]->LyricId, $songs[0]->LyricChecksum);
 
 
         // replace this example code with whatever you need
         return $this->render('default/test.html.twig', [
             'songs' => $songs,
+            'song' => $song,
+            'lyric' => $song->Lyric
         ]);
     }
 

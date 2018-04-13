@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Service\GetLyrics;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,12 +22,13 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/test", name="test")
+     * @Route("/page2", name="page2")
+     * @Method({"GET", "POST"})
      */
     public function testAction(Request $request, GetLyrics $getLyrics)
     {
-
-        $toFind = "j'ai encore rêvé d'elle";
+        $toFind = $request->request->get('tofind');
+//        $toFind = "j'ai encore rêvé d'elle";
 
         $songs = $getLyrics->search($toFind);
 

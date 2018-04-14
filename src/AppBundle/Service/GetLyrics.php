@@ -12,16 +12,20 @@ class GetLyrics
      */
     public function search(string $toFind)
     {
-
-        $toFind = urlencode($toFind);
+        if (0 == strlen($toFind)) {
+            return ['ok' => false, 'toFind' => $toFind];
+        }
+        $toFindEncoded = urlencode(htmlspecialchars($toFind));
         $apiUrl = self::BASE_URL . "/SearchLyricText";
-        $uri = "$apiUrl?lyricText=$toFind";
+        $uri = "$apiUrl?lyricText=$toFindEncoded";
 
         $response = $this->xmlToObject(file_get_contents($uri));
         $response = $response->SearchLyricResult;
-        if (count($response) > 0)
-            array_pop($response);
-        return $response;
+        if (!is_array($response) || 0 == count($response)) {
+            return ['ok' => false, 'toFind' => $toFind];
+        }
+        array_pop($response);
+        return ['ok'=> true, 'toFind' => $response];
     }
 
     public function getById($lyricId, $lyricChecksum)

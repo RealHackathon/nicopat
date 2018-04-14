@@ -15,9 +15,16 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $toFind = "";
+        $ok = 1;
+        if ($request->query) {
+            $toFind = $request->query->get('toFind');
+            $ok = $request->query->get('ok');
+        }
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'ok' => $ok,
+            'toFind' => $toFind,
         ]);
     }
 
@@ -25,18 +32,22 @@ class DefaultController extends Controller
      * @Route("/page2", name="page2")
      * @Method({"GET", "POST"})
      */
-    public function testAction(Request $request, GetLyrics $getLyrics)
+    public function page2Action(Request $request, GetLyrics $getLyrics)
     {
-
-        $toFind = $request->request->get('tofind');
-
+        $toFind = $request->request->get('toFind');
         $songs = $getLyrics->search($toFind);
-        $song = $getLyrics->getById($songs[0]->LyricId, $songs[0]->LyricChecksum);
+        if (!$songs['ok']) {
+            return $this->redirectToRoute('homepage', [
+                'ok' => 0,
+                'toFind' => $songs['toFind'],
+            ]);
+        }
+        $song = $getLyrics->getById($songs['toFind'][0]->LyricId, $songs['toFind'][0]->LyricChecksum);
 
 
         // replace this example code with whatever you need
         return $this->render('default/test.html.twig', [
-            'songs' => $songs,
+            'songs' => $songs['toFind'],
             'song' => $song,
             'lyric' => $song->Lyric
         ]);

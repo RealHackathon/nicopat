@@ -27,8 +27,10 @@ class GetLyrics
         $toFind = str_replace("'", " ", $toFind);
         $keyWords = explode(' ',$toFind);
         $toFind = "";
+        $score = [];
         foreach( $keyWords as $keyWord) {
-            if (strlen($keyWord) > 2) {
+            if (strlen($keyWord) > 1) {
+                $score[$keyWord] = 0;
                 if (strlen($toFind) > 0) {
                     $toFind .= '+';
                 }
@@ -38,12 +40,18 @@ class GetLyrics
         $toFindEncoded = htmlspecialchars($toFind);
         $apiUrl = self::BASE_URL . "/SearchLyricText";
         $uri = "$apiUrl?lyricText=$toFindEncoded";
-        $response = $this->xmlToObject(file_get_contents($uri));
-        $response = $response->SearchLyricResult;
-        if (!is_array($response) || 0 == count($response)) {
+        $songs = $this->xmlToObject(file_get_contents($uri));
+        $songs = $songs->SearchLyricResult;
+        if (!is_array($songs) || 0 == count($songs)) {
             return [];
         }
-        array_pop($response);
+        array_pop($songs);
+        $response = [];
+        for ($i=0; $i<10; $i++) {
+            if (isset($songs[$i])) {
+                $response[] = $songs[$i];
+            }
+        }
         return $response;
     }
 
@@ -59,6 +67,13 @@ class GetLyrics
 
     public function apiGetLines(string $searchTerm, string $lyric)
     {
+        $keyWords = explode(' ', str_replace("'", " ", $searchTerm));
+        $ok = false;
+        foreach( $keyWords as $keyWord) {
+            if (strlen($keyWord) > 1) {
+                $score[strtoupper($keyWord)] = 0;
+            }
+        }
         $lyrics = preg_split('/\n/', $lyric);
         $lyrics = array_reduce($lyrics, function ($acc, $item) {
             if (trim($item)) {
@@ -74,9 +89,14 @@ class GetLyrics
             $max = min($lineNumber + 3, count($lyrics));
             for ($i=$lineNumber; $i < $max; $i++) {
                 $lines[] = $lyrics[$i];
+                $found = true;
+                foreach ($score as $key => $value) {
+                    $found = $found && (preg_match('/'.$key.'/', strtoupper($lyrics[$i])) > 0);
+                }
+                $ok = $ok || $found;
             }
         }
-        return $lines;
+        return ['ok' => $ok, 'lines' => $lines];
     }
 
     /**

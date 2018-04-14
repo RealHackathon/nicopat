@@ -45,8 +45,9 @@ class DefaultController extends Controller
         foreach ($songs as $song) {
             $lyrics = $getLyrics->apiGetById($song->LyricId, $song->LyricChecksum);
             $lines = $getLyrics->apiGetLines($toFind, $lyrics->Lyric);
-            if ([] != $lines) {
-                $song->Lines = $lines;
+            if ([] != $lines['lines']) {
+                $song->Lines = $lines['lines'];
+                $song->found = $lines['ok'];
                 $selectedList[] = $song;
             }
         }
@@ -93,34 +94,5 @@ class DefaultController extends Controller
         $reponse->headers->set('Content-Type', 'application/json');
         return $reponse;
     }
-
-    /**
-     * @Route("/api/bot/{info}", name="api_bot")
-     * @Method({"GET", "POST"})
-     */
-    public function apiBotAction(Request $request, $info)
-    {
-//        if ($request->request ) {
-//            $lyricId = $request->request->get('info');
-//        }
-
-//        $botUrl = 'https://api.recast.ai/v2/request';
-        $token = '2b65ad49852af046130b64a4cead725f';
-        $client = new Client($token, 'fr');
-        $data = $client->request->analyseText($info);
-
-        var_dump($data);die();
-
-        $reponse = new JsonResponse($data);
-        $reponse->headers->set('Content-Type', 'application/json');
-        return $reponse;
-
-
-//        -H "Authorization: Token 2b65ad49852af046130b64a4cead725f" \
-//    --data "text=your-text" --data "language=fr" \
-//    "https://api.recast.ai/v2/request"
-
-    }
-
 
 }

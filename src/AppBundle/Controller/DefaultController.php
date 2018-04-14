@@ -73,16 +73,18 @@ class DefaultController extends Controller
      * @Route("/api/lines/{lyricId}/{lyricChecksum}", name="songs")
      * @Method({"GET", "POST"})
      */
-    public function apiSongsAction(Request $request, GetLyrics $getLyrics, $lyricId, $lyricChecksum)
+    public function apiLinesAction(Request $request, GetLyrics $getLyrics, $lyricId, $lyricChecksum)
     {
 //        if ($request->request ) {
 //            $lyricId = $request->request->get('lyricId');
 //            $lyricChecksum = $request->request->get('lyricChecksum');
 //        }
-        lines = $getLyrics->apiSearch($toFind);
-        $reponse = new JsonResponse($songs);
-        $reponse->headers->set('Content-Type', 'application/json');
-        return $reponse;
+
+
+//        lines = $getLyrics->apiSearch($toFind);
+//        $reponse = new JsonResponse($songs);
+//        $reponse->headers->set('Content-Type', 'application/json');
+//        return $reponse;
     }
 
 

@@ -63,6 +63,7 @@ class DefaultController extends Controller
 //        if ($request->request ) {
 //            $toFind = $request->request->get('toFind');
 //        }
+
         $songs = $getLyrics->apiSearch($toFind);
         $reponse = new JsonResponse($songs);
         $reponse->headers->set('Content-Type', 'application/json');
@@ -70,10 +71,10 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/api/lines/{lyricId}/{lyricChecksum}", name="songs")
+     * @Route("/api/id/{lyricId}/{lyricChecksum}", name="lines")
      * @Method({"GET", "POST"})
      */
-    public function apiLinesAction(Request $request, GetLyrics $getLyrics, $lyricId, $lyricChecksum)
+    public function apiIdAction(Request $request, GetLyrics $getLyrics, $lyricId, $lyricChecksum)
     {
 //        if ($request->request ) {
 //            $lyricId = $request->request->get('lyricId');
@@ -81,10 +82,10 @@ class DefaultController extends Controller
 //        }
 
 
-//        lines = $getLyrics->apiSearch($toFind);
-//        $reponse = new JsonResponse($songs);
-//        $reponse->headers->set('Content-Type', 'application/json');
-//        return $reponse;
+        $lines = $getLyrics->apiGetById($lyricId, $lyricChecksum);
+        $reponse = new JsonResponse($lines);
+        $reponse->headers->set('Content-Type', 'application/json');
+        return $reponse;
     }
 
 

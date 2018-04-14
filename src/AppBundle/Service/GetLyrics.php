@@ -8,6 +8,13 @@ class GetLyrics
 {
     const BASE_URL = 'http://api.chartlyrics.com/apiv1.asmx/';
 
+    private function xmlToObject(string $xmlString)
+    {
+        $response = simplexml_load_string($xmlString);
+        $response = json_encode($response);
+        return json_decode($response);
+    }
+
     /**
      * @param string $toFind
      * @return mixed
@@ -29,29 +36,14 @@ class GetLyrics
         return $response;
     }
 
-    public function apiGetLines($search, $lyric)
+    public function apiGetById($lyricId, $lyricChecksum)
     {
-        $lyrics = preg_split('/\n/', $lyric);
-        $lyrics = array_reduce($lyrics, function ($acc, $item) {
-            if (trim($item)) {
-                $acc[] = $item;
-            }
-            return $acc;
-        }, []);
-
-        $fuse = new Fuse($lyrics);
-        $results = $fuse->search($searchTerm);
-
-        $lines = [];
-        if (count($results)>0) {
-            $lineNumber = $results[0];
-            $max = min($lineNumber + 3, count($lyrics));
-            for ($i=$lineNumber; $i < $max; $i++) {
-                $lines[] = $lyrics[$i];
-            }
-        }
-
-        return $lines;
+        $apiUrl = self::BASE_URL . "/GetLyric?";
+        $songQuery = http_build_query(compact('lyricId', 'lyricChecksum'));
+        $uri = $apiUrl . $songQuery;
+        $contents = file_get_contents($uri);
+        $response = $this->xmlToObject($contents);
+        return $response;
     }
 
 
@@ -90,37 +82,29 @@ class GetLyrics
         return $response;
     }
 
-    public function getLines($search, $lyric)
-    {
-        $lyrics = preg_split('/\n/', $lyric);
-        $lyrics = array_reduce($lyrics, function ($acc, $item) {
-            if (trim($item)) {
-                $acc[] = $item;
-            }
-            return $acc;
-        }, []);
-
-        $fuse = new Fuse($lyrics);
-        $results = $fuse->search($searchTerm);
-
-        $lines = [];
-        if (count($results)>0) {
-            $lineNumber = $results[0];
-            $max = min($lineNumber + 3, count($lyrics));
-            for ($i=$lineNumber; $i < $max; $i++) {
-                $lines[] = $lyrics[$i];
-            }
-        }
-
-        return $lines;
-    }
-
-    private function xmlToObject(string $xmlString)
-    {
-        $response = simplexml_load_string($xmlString);
-        $response = json_encode($response);
-        return json_decode($response);
-
-    }
+//    public function getLines($search, $lyric)
+//    {
+//        $lyrics = preg_split('/\n/', $lyric);
+//        $lyrics = array_reduce($lyrics, function ($acc, $item) {
+//            if (trim($item)) {
+//                $acc[] = $item;
+//            }
+//            return $acc;
+//        }, []);
+//
+//        $fuse = new Fuse($lyrics);
+//        $results = $fuse->search($searchTerm);
+//
+//        $lines = [];
+//        if (count($results)>0) {
+//            $lineNumber = $results[0];
+//            $max = min($lineNumber + 3, count($lyrics));
+//            for ($i=$lineNumber; $i < $max; $i++) {
+//                $lines[] = $lyrics[$i];
+//            }
+//        }
+//
+//        return $lines;
+//    }
 
 }

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Service;
 
+use Fuse\Fuse;
+
 class GetLyrics
 {
     const BASE_URL = 'http://api.chartlyrics.com/apiv1.asmx/';
@@ -42,9 +44,29 @@ class GetLyrics
 
     }
 
-    public function getALine($search, $lyric)
+    public function getLines($search, $lyric)
     {
+        $lyrics = preg_split('/\n/', $lyric);
+        $lyrics = array_reduce($lyrics, function ($acc, $item) {
+            if (trim($item)) {
+                $acc[] = $item;
+            }
+            return $acc;
+        }, []);
 
+        $fuse = new Fuse($lyrics);
+        $results = $fuse->search($searchTerm);
+
+        $lines = [];
+        if (count($results)>0) {
+            $lineNumber = $results[0];
+            $max = min($lineNumber + 3, count($lyrics));
+            for ($i=$lineNumber; $i < $max; $i++) {
+                $lines[] = $lyrics[$i];
+            }
+        }
+
+        return $lines;
     }
 
     private function xmlToObject(string $xmlString)

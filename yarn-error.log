@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/bin/node /usr/share/yarn/bin/yarn.js run dev
+  /usr/bin/node /usr/share/yarn/bin/yarn.js run build
 
 PATH: 
   /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/wilder3/.yarn/bin:/home/wilder3/.config/composer/vendor/bin
@@ -33,7 +33,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
 Trace: 
-  Error: Command "dev" not found.
+  Error: Command "build" not found.
       at new MessageError (/usr/share/yarn/lib/cli.js:186:110)
       at /usr/share/yarn/lib/cli.js:87307:17
       at Generator.next (<anonymous>)

@@ -24,7 +24,18 @@ class GetLyrics
         if (0 == strlen($toFind)) {
             return [];
         }
-        $toFindEncoded = urlencode(htmlspecialchars($toFind));
+        $toFind = str_replace("'", " ", $toFind);
+        $keyWords = explode(' ',$toFind);
+        $toFind = "";
+        foreach( $keyWords as $keyWord) {
+            if (strlen($keyWord) > 2) {
+                if (strlen($toFind) > 0) {
+                    $toFind .= '+';
+                }
+                $toFind .= $keyWord;
+            }
+        }
+        $toFindEncoded = htmlspecialchars($toFind);
         $apiUrl = self::BASE_URL . "/SearchLyricText";
         $uri = "$apiUrl?lyricText=$toFindEncoded";
         $response = $this->xmlToObject(file_get_contents($uri));
@@ -68,10 +79,6 @@ class GetLyrics
         return $lines;
     }
 
-
-
-
-
     /**
      * @param string $toFind
      * @return mixed
@@ -103,30 +110,5 @@ class GetLyrics
         $response = $this->xmlToObject($contents);
         return $response;
     }
-
-//    public function getLines($search, $lyric)
-//    {
-//        $lyrics = preg_split('/\n/', $lyric);
-//        $lyrics = array_reduce($lyrics, function ($acc, $item) {
-//            if (trim($item)) {
-//                $acc[] = $item;
-//            }
-//            return $acc;
-//        }, []);
-//
-//        $fuse = new Fuse($lyrics);
-//        $results = $fuse->search($searchTerm);
-//
-//        $lines = [];
-//        if (count($results)>0) {
-//            $lineNumber = $results[0];
-//            $max = min($lineNumber + 3, count($lyrics));
-//            for ($i=$lineNumber; $i < $max; $i++) {
-//                $lines[] = $lyrics[$i];
-//            }
-//        }
-//
-//        return $lines;
-//    }
 
 }

@@ -30,31 +30,6 @@ class DefaultController extends Controller
         ]);
     }
 
-//    /**
-//     * @Route("/page2", name="page2")
-//     * @Method({"GET", "POST"})
-//     */
-//    public function page2Action(Request $request, GetLyrics $getLyrics)
-//    {
-//        $toFind = $request->request->get('toFind');
-//        $songs = $getLyrics->search($toFind);
-//        if (!$songs['ok']) {
-//            return $this->redirectToRoute('homepage', [
-//                'ok' => 0,
-//                'toFind' => $songs['toFind'],
-//            ]);
-//        }
-//        $song = $getLyrics->getById($songs['toFind'][0]->LyricId, $songs['toFind'][0]->LyricChecksum);
-//
-//
-//        // replace this example code with whatever you need
-//        return $this->render('default/test.html.twig', [
-//            'songs' => $songs['toFind'],
-//            'song' => $song,
-//            'lyric' => $song->Lyric
-//        ]);
-//    }
-
     /**
      * @Route("/api/songs/{toFind}", name="api_songs")
      * @Method({"GET", "POST"})
@@ -66,14 +41,16 @@ class DefaultController extends Controller
 //        }
 
         $songs = $getLyrics->apiSearch($toFind);
+        $selectedList = [];
         foreach ($songs as $song) {
             $lyrics = $getLyrics->apiGetById($song->LyricId, $song->LyricChecksum);
             $lines = $getLyrics->apiGetLines($toFind, $lyrics->Lyric);
-            $song = $song->Lines = $lines;
-
-
+            if ([] != $lines) {
+                $song->Lines = $lines;
+                $selectedList[] = $song;
+            }
         }
-        $reponse = new JsonResponse($songs);
+        $reponse = new JsonResponse($selectedList);
         $reponse->headers->set('Content-Type', 'application/json');
         return $reponse;
     }

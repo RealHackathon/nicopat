@@ -11,9 +11,9 @@
             </div>
             <div class="responses-container">
 
-                <transition-group name="list" tag>
+                <transition-group name="list" tag="div">
 
-                    <div class="row responses" v-for="(resp, index) in computedResponses" :key="index">
+                    <div class="row responses" v-for="(resp, index) in computedResponses" :key="resp.id">
 
                         <div class="col-xs-6 response-term">
                             <div> {{resp.term}}</div>
@@ -65,7 +65,7 @@
     import axios from "axios";
     import Logo from './Logo';
     import SiriWave from 'siriwavejs';
-    import {sample, sampleSize, uniqBy, last} from 'lodash';
+    import {sample, sampleSize, uniqBy, last, uniqueId, filter} from 'lodash';
     import MSG from './messages';
 
     export default {
@@ -102,6 +102,7 @@
                 this.userInput = '';
             },
             addToResponses(term, songs) {
+                songs = filter(songs, 'found');
                 if (!songs.length) {
                     this.botMessage = this.getRandMsg('nothing');
 
@@ -110,18 +111,21 @@
                 }
                 var song = songs[0];
                 var msg = `J'ai trouvé du ${song.Artist} `;
-                if (songs.length > 1) {
-                    msg += this.getRandMsg('suggestions');
-                    var sample = uniqBy(songs, 'Artist');
+                var sample = uniqBy(songs, 'Artist');
+                var suggestions = sampleSize(sample.slice(1, sample.length - 1), 3);
 
-                    this.suggestions = sampleSize(sample.slice(1, sample.length - 1), 3);
+
+                if (suggestions.length > 0) {
+                    msg += this.getRandMsg('suggestions');
+
+                    this.suggestions = suggestions;
                 }
                 else {
                     msg += this.getRandMsg('nosuggestions');
 
                 }
                 this.botMessage = msg;
-                this.responses.push({term, song});
+                this.responses.push({term, song, id: uniqueId('lyri')});
             },
             pickASongLines(songs) {
                 if (!songs[0]) return {};
@@ -132,7 +136,7 @@
             },
             addSuggestion(song) {
                 var term = last(this.responses).term;
-                this.responses.push({term, song});
+                this.responses.push({term, song, id: uniqueId('lyri')});
 
             }
 
@@ -198,19 +202,37 @@
         border: 1px solid #9e00ba;
     }
 
+    /*.responses {*/
+    /*transition: all 1s;*/
+
+    /*}*/
+    .responses-container {
+
+    }
+
     .list-item {
         display: inline-block;
         margin-right: 10px;
+
     }
 
-    .list-enter-active, .list-leave-active {
-        transition: all 1s;
+    /*.list-move{*/
+    /*transition: transform 0.5s;*/
+    /*}*/
+
+    /*.list-enter-active, .list-leave-active {*/
+    .list-enter-active {
+        transition: all 0.5s;
     }
 
-    .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */
-    {
+    .list-enter {
         opacity: 0;
         transform: translateY(30px);
+    }
+
+    .list-leave-to {
+        transform: scaleY(0);
+
     }
 
     .responses {

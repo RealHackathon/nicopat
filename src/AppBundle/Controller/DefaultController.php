@@ -6,6 +6,7 @@ use AppBundle\Service\GetLyrics;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
@@ -52,5 +53,41 @@ class DefaultController extends Controller
             'lyric' => $song->Lyric
         ]);
     }
+
+    /**
+     * @Route("/api/songs/{toFind}", name="songs")
+     * @Method({"GET", "POST"})
+     */
+    public function apiSongsAction(Request $request, GetLyrics $getLyrics, $toFind)
+    {
+//        if ($request->request ) {
+//            $toFind = $request->request->get('toFind');
+//        }
+        $songs = $getLyrics->apiSearch($toFind);
+        $reponse = new JsonResponse($songs);
+        $reponse->headers->set('Content-Type', 'application/json');
+        return $reponse;
+    }
+
+    /**
+     * @Route("/api/lines/{lyricId}/{lyricChecksum}", name="songs")
+     * @Method({"GET", "POST"})
+     */
+    public function apiSongsAction(Request $request, GetLyrics $getLyrics, $lyricId, $lyricChecksum)
+    {
+//        if ($request->request ) {
+//            $lyricId = $request->request->get('lyricId');
+//            $lyricChecksum = $request->request->get('lyricChecksum');
+//        }
+        lines = $getLyrics->apiSearch($toFind);
+        $reponse = new JsonResponse($songs);
+        $reponse->headers->set('Content-Type', 'application/json');
+        return $reponse;
+    }
+
+
+
+
+
 
 }
